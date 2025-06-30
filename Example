@@ -1,40 +1,56 @@
-local ModernUI = require(path.to.ModernUILibrary)
+-- Загрузка библиотеки
+local ModernUILib = loadstring(game:HttpGet("https://raw.githubusercontent.com/XuRyAl/Modern-Ui-Library-Gpt/refs/heads/main/Script"))()
 
-local gui = ModernUI:CreateScreenGui("FancyUI")
-local win = ModernUI:CreateWindow{Parent = gui}
+-- Создать меню (главное окно)
+local menu = ModernUILib:CreateMenu{
+    Title = "Мобильное меню",
+    Size = UDim2.new(0, 340, 0, 420), -- Можно изменить
+    Position = UDim2.new(0.5, 0, 0.5, 0),
+    Theme = "Dark" -- или "Light"
+}
 
-ModernUI:CreateTitle{Parent = win, Text = "Современное меню"}
-
-ModernUI:CreateButton{
-    Parent = win,
-    Text = "Нажми!",
-    Position = UDim2.new(0, 20, 0, 50),
-    OnClick = function()
-        print("Кнопка нажата")
+-- Добавить кнопку
+menu:AddButton{
+    Text = "Поприветствовать",
+    Callback = function()
+        ModernUILib:Notify("Привет!", "Вы нажали на кнопку!", 2)
     end
 }
 
-ModernUI:CreateLabel{
-    Parent = win,
-    Text = "Очень современная библиотека",
-    Position = UDim2.new(0, 20, 0, 95)
-}
-
-ModernUI:CreateDivider{Parent = win, Position = UDim2.new(0, 20, 0, 130)}
-
-local _, setChecked = ModernUI:CreateCheckbox{
-    Parent = win,
-    Checked = false,
-    Position = UDim2.new(0, 20, 0, 150),
-    OnChange = function(state)
-        print("Чекбокс:", state)
+-- Добавить чекбокс
+menu:AddCheckbox{
+    Text = "Включить режим",
+    State = false,
+    Callback = function(state)
+        ModernUILib:Notify("Чекбокс", "Режим " .. (state and "включён" or "выключен"), 2)
     end
 }
 
-local _, setSlider = ModernUI:CreateSlider{
-    Parent = win,
+-- Добавить слайдер
+menu:AddSlider{
     Text = "Громкость",
-    Min = 0, Max = 100, Value = 50, Step = 1,
+    Min = 0,
+    Max = 100,
+    Value = 30,
+    Callback = function(val)
+        ModernUILib:Notify("Слайдер", "Громкость: " .. val, 1)
+    end
+}
+
+-- Добавить текстовую метку
+menu:AddLabel{
+    Text = "Современная мобильная библиотека для Roblox",
+    TextSize = 18
+}
+
+-- Добавить ещё одну кнопку для случайных значений
+menu:AddButton{
+    Text = "Случайные значения",
+    Callback = function()
+        menu:SetCheckboxState(2, math.random() > 0.5) -- 2 — порядковый номер чекбокса
+        menu:SetSliderValue(1, math.random(0, 100))    -- 1 — порядковый номер слайдера
+    end
+}   Min = 0, Max = 100, Value = 50, Step = 1,
     Position = UDim2.new(0, 20, 0, 190),
     OnChange = function(val)
         print("Слайдер:", val)
