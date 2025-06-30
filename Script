@@ -1,0 +1,290 @@
+local ModernUI = {}
+ModernUI.__index = ModernUI
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+-- Цветовая палитра
+ModernUI.Palette = {
+    Background = Color3.fromRGB(32, 35, 41),
+    Accent = Color3.fromRGB(100, 149, 237),
+    Button = Color3.fromRGB(44, 54, 80),
+    ButtonHover = Color3.fromRGB(60, 80, 120),
+    ButtonText = Color3.fromRGB(240, 240, 255),
+    SliderBG = Color3.fromRGB(48, 52, 60),
+    SliderFill = Color3.fromRGB(100, 149, 237),
+    CheckOn = Color3.fromRGB(90, 200, 120),
+    CheckOff = Color3.fromRGB(80, 90, 105),
+    Shadow = Color3.fromRGB(24, 26, 34)
+}
+
+function ModernUI:CreateScreenGui(name, parent)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = name or "ModernUI"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = parent or Players.LocalPlayer:WaitForChild("PlayerGui")
+    return screenGui
+end
+
+function ModernUI:CreateShadow(parent, transparency)
+    local shadow = Instance.new("ImageLabel")
+    shadow.Name = "Shadow"
+    shadow.BackgroundTransparency = 1
+    shadow.Image = "rbxassetid://1316045217"
+    shadow.ImageColor3 = self.Palette.Shadow
+    shadow.ImageTransparency = transparency or 0.5
+    shadow.ScaleType = Enum.ScaleType.Slice
+    shadow.SliceCenter = Rect.new(10,10,118,118)
+    shadow.Size = UDim2.new(1, 16, 1, 16)
+    shadow.Position = UDim2.new(0, -8, 0, -8)
+    shadow.ZIndex = 0
+    shadow.Parent = parent
+end
+
+function ModernUI:CreateWindow(props)
+    local frame = Instance.new("Frame")
+    frame.Name = props.Name or "Window"
+    frame.Size = props.Size or UDim2.new(0, 350, 0, 260)
+    frame.Position = props.Position or UDim2.new(0.5, -175, 0.5, -130)
+    frame.BackgroundColor3 = props.BackgroundColor3 or self.Palette.Background
+    frame.BorderSizePixel = 0
+    frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    frame.BackgroundTransparency = 0
+    frame.ClipsDescendants = false
+    frame.Parent = props.Parent
+    -- Закруглённые углы
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 18)
+    corner.Parent = frame
+    -- Тень
+    self:CreateShadow(frame, 0.65)
+    return frame
+end
+
+function ModernUI:CreateTitle(props)
+    local label = Instance.new("TextLabel")
+    label.Name = "Title"
+    label.Size = props.Size or UDim2.new(1, 0, 0, 38)
+    label.Position = props.Position or UDim2.new(0, 0, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = props.Text or "Заголовок"
+    label.Font = Enum.Font.GothamBold
+    label.TextColor3 = self.Palette.Accent
+    label.TextSize = 26
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.TextYAlignment = Enum.TextYAlignment.Center
+    label.Parent = props.Parent
+    return label
+end
+
+function ModernUI:CreateButton(props)
+    local button = Instance.new("TextButton")
+    button.Name = props.Name or "Button"
+    button.Size = props.Size or UDim2.new(0, 130, 0, 40)
+    button.Position = props.Position or UDim2.new(0, 20, 0, 50)
+    button.BackgroundColor3 = props.BackgroundColor3 or self.Palette.Button
+    button.TextColor3 = props.TextColor3 or self.Palette.ButtonText
+    button.Font = Enum.Font.GothamSemibold
+    button.Text = props.Text or "Кнопка"
+    button.TextSize = props.TextSize or 20
+    button.AutoButtonColor = false
+    button.Parent = props.Parent
+    -- Закруглённые углы
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = button
+    -- Hover
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.18), {BackgroundColor3 = self.Palette.ButtonHover}):Play()
+    end)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.18), {BackgroundColor3 = self.Palette.Button}):Play()
+    end)
+    if props.OnClick then
+        button.MouseButton1Click:Connect(props.OnClick)
+    end
+    return button
+end
+
+function ModernUI:CreateLabel(props)
+    local label = Instance.new("TextLabel")
+    label.Name = props.Name or "Label"
+    label.Size = props.Size or UDim2.new(1, -40, 0, 28)
+    label.Position = props.Position or UDim2.new(0, 20, 0, 95)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = props.TextColor3 or Color3.fromRGB(200,200,220)
+    label.Font = Enum.Font.Gotham
+    label.Text = props.Text or "Текст"
+    label.TextSize = props.TextSize or 18
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = props.Parent
+    return label
+end
+
+function ModernUI:CreateDivider(props)
+    local divider = Instance.new("Frame")
+    divider.Name = props.Name or "Divider"
+    divider.Size = props.Size or UDim2.new(1, -40, 0, 2)
+    divider.Position = props.Position or UDim2.new(0, 20, 0, 130)
+    divider.BackgroundColor3 = props.BackgroundColor3 or Color3.fromRGB(60, 70, 90)
+    divider.BorderSizePixel = 0
+    divider.Parent = props.Parent
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = divider
+    return divider
+end
+
+function ModernUI:CreateCheckbox(props)
+    local holder = Instance.new("Frame")
+    holder.Name = props.Name or "CheckboxHolder"
+    holder.Size = props.Size or UDim2.new(0, 28, 0, 28)
+    holder.Position = props.Position or UDim2.new(0, 20, 0, 150)
+    holder.BackgroundTransparency = 1
+    holder.Parent = props.Parent
+
+    local box = Instance.new("TextButton")
+    box.Name = "Checkbox"
+    box.Size = UDim2.new(0, 24, 0, 24)
+    box.Position = UDim2.new(0, 0, 0, 2)
+    box.BackgroundColor3 = props.Checked and self.Palette.CheckOn or self.Palette.CheckOff
+    box.Text = ""
+    box.Parent = holder
+    box.AutoButtonColor = false
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = box
+
+    local check = Instance.new("ImageLabel")
+    check.Name = "Check"
+    check.Size = UDim2.new(1, -6, 1, -6)
+    check.Position = UDim2.new(0, 3, 0, 3)
+    check.BackgroundTransparency = 1
+    check.Image = "rbxassetid://6031094678"
+    check.ImageTransparency = props.Checked and 0 or 1
+    check.Parent = box
+
+    local state = props.Checked or false
+
+    local function setChecked(val)
+        state = val
+        TweenService:Create(box, TweenInfo.new(0.18), {BackgroundColor3 = state and self.Palette.CheckOn or self.Palette.CheckOff}):Play()
+        TweenService:Create(check, TweenInfo.new(0.18), {ImageTransparency = state and 0 or 1}):Play()
+        if props.OnChange then props.OnChange(state) end
+    end
+
+    box.MouseButton1Click:Connect(function()
+        setChecked(not state)
+    end)
+
+    return holder, setChecked
+end
+
+function ModernUI:CreateSlider(props)
+    local sliderFrame = Instance.new("Frame")
+    sliderFrame.Name = props.Name or "Slider"
+    sliderFrame.Size = props.Size or UDim2.new(0, 260, 0, 38)
+    sliderFrame.Position = props.Position or UDim2.new(0, 20, 0, 190)
+    sliderFrame.BackgroundTransparency = 1
+    sliderFrame.Parent = props.Parent
+
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, -20, 0, 8)
+    bg.Position = UDim2.new(0, 10, 0.5, -4)
+    bg.BackgroundColor3 = self.Palette.SliderBG
+    bg.BorderSizePixel = 0
+    bg.Parent = sliderFrame
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = bg
+
+    local fill = Instance.new("Frame")
+    fill.Name = "Fill"
+    fill.Size = UDim2.new(0, 0, 1, 0)
+    fill.Position = UDim2.new(0, 0, 0, 0)
+    fill.BackgroundColor3 = self.Palette.SliderFill
+    fill.BorderSizePixel = 0
+    fill.Parent = bg
+    local fillCorner = Instance.new("UICorner")
+    fillCorner.CornerRadius = UDim.new(1, 0)
+    fillCorner.Parent = fill
+
+    local circle = Instance.new("Frame")
+    circle.Name = "Circle"
+    circle.Size = UDim2.new(0, 20, 0, 20)
+    circle.AnchorPoint = Vector2.new(0.5, 0.5)
+    circle.Position = UDim2.new(0, 0, 0.5, 0)
+    circle.BackgroundColor3 = self.Palette.Accent
+    circle.Parent = bg
+    local circleCorner = Instance.new("UICorner")
+    circleCorner.CornerRadius = UDim.new(1, 0)
+    circleCorner.Parent = circle
+    -- тень
+    self:CreateShadow(circle, 0.75)
+
+    local min = props.Min or 0
+    local max = props.Max or 100
+    local step = props.Step or 1
+    local value = props.Value or min
+
+    local function setSlider(val, fire)
+        val = math.clamp(math.floor((val-min)/step+0.5)*step+min, min, max)
+        value = val
+        local percent = (val-min)/(max-min)
+        TweenService:Create(fill, TweenInfo.new(0.15), {Size = UDim2.new(percent, 0, 1, 0)}):Play()
+        TweenService:Create(circle, TweenInfo.new(0.15), {Position = UDim2.new(percent, 0, 0.5, 0)}):Play()
+        valueLabel.Text = tostring(val)
+        if fire and props.OnChange then props.OnChange(val) end
+    end
+
+    local dragging = false
+    bg.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            local rel = (input.Position.X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X
+            setSlider(min + (max-min) * rel, true)
+        end
+    end)
+    bg.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    bg.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local rel = (input.Position.X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X
+            setSlider(min + (max-min) * rel, true)
+        end
+    end)
+
+    local title = Instance.new("TextLabel")
+    title.Name = "SliderLabel"
+    title.Text = props.Text or "Слайдер"
+    title.Size = UDim2.new(0.6, 0, 1, 0)
+    title.Position = UDim2.new(0, 0, 0, 0)
+    title.Font = Enum.Font.Gotham
+    title.TextColor3 = Color3.fromRGB(200,200,220)
+    title.TextSize = 18
+    title.BackgroundTransparency = 1
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = sliderFrame
+
+    valueLabel = Instance.new("TextLabel")
+    valueLabel.Name = "SliderValue"
+    valueLabel.Size = UDim2.new(0.3, 0, 1, 0)
+    valueLabel.Position = UDim2.new(0.7, 0, 0, 0)
+    valueLabel.Font = Enum.Font.GothamBold
+    valueLabel.TextColor3 = self.Palette.Accent
+    valueLabel.TextSize = 18
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+    valueLabel.Text = tostring(value)
+    valueLabel.Parent = sliderFrame
+
+    setSlider(value, false)
+
+    return sliderFrame, setSlider
+end
+
+return setmetatable({}, ModernUI)
