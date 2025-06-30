@@ -1,0 +1,46 @@
+local ModernUI = require(path.to.ModernUILibrary)
+
+local gui = ModernUI:CreateScreenGui("FancyUI")
+local win = ModernUI:CreateWindow{Parent = gui}
+
+ModernUI:CreateTitle{Parent = win, Text = "Современное меню"}
+
+ModernUI:CreateButton{
+    Parent = win,
+    Text = "Нажми!",
+    Position = UDim2.new(0, 20, 0, 50),
+    OnClick = function()
+        print("Кнопка нажата")
+    end
+}
+
+ModernUI:CreateLabel{
+    Parent = win,
+    Text = "Очень современная библиотека",
+    Position = UDim2.new(0, 20, 0, 95)
+}
+
+ModernUI:CreateDivider{Parent = win, Position = UDim2.new(0, 20, 0, 130)}
+
+local _, setChecked = ModernUI:CreateCheckbox{
+    Parent = win,
+    Checked = false,
+    Position = UDim2.new(0, 20, 0, 150),
+    OnChange = function(state)
+        print("Чекбокс:", state)
+    end
+}
+
+local _, setSlider = ModernUI:CreateSlider{
+    Parent = win,
+    Text = "Громкость",
+    Min = 0, Max = 100, Value = 50, Step = 1,
+    Position = UDim2.new(0, 20, 0, 190),
+    OnChange = function(val)
+        print("Слайдер:", val)
+    end
+}
+
+-- Для динамического изменения:
+-- setChecked(true)
+-- setSlider(75)
